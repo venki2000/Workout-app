@@ -181,7 +181,7 @@
   </div>
 
   <!-- ADD EXERCISE MODAL / DRAWER -->
-  <div id="exerciseModal" class="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-sm hidden flex items-end sm:items-center justify-center p-0 sm:p-4 transition-all">
+  <div id="exerciseModal" style="display: none !important;" class="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-sm flex items-end sm:items-center justify-center p-0 sm:p-4 transition-all">
     <div class="w-full max-w-md bg-slate-900 border border-slate-800 rounded-t-3xl sm:rounded-2xl p-5 shadow-2xl max-h-[85vh] flex flex-col space-y-4 animate-in slide-in-from-bottom duration-200">
       <div class="flex items-center justify-between pb-2 border-b border-slate-800">
         <h3 class="text-base font-bold text-white">Select or Type Exercise</h3>
@@ -896,10 +896,16 @@
       });
 
       // Modal Open/Close
-      openAddExerciseBtn.addEventListener('click', () => {
-        exerciseModal.classList.remove('hidden');
+      function openModal() {
+        exerciseModal.style.setProperty('display', 'flex', 'important');
         customExerciseInput.value = '';
         setTimeout(() => customExerciseInput.focus(), 100);
+      }
+
+      openAddExerciseBtn.addEventListener('click', openModal);
+      openAddExerciseBtn.addEventListener('touchend', (e) => {
+        e.preventDefault();
+        openModal();
       });
 
       closeExerciseModalBtn.addEventListener('click', closeModal);
@@ -927,7 +933,7 @@
     }
 
     function closeModal() {
-      exerciseModal.classList.add('hidden');
+      exerciseModal.style.setProperty('display', 'none', 'important');
     }
 
     // --- TOAST NOTIFICATIONS ---
@@ -954,7 +960,7 @@
         .replace(/'/g, '&#39;');
     }
 
-   // --- SYNC CONFIGURATION ---
+        // --- SYNC CONFIGURATION ---
     const SUPABASE_URL = "https://wzyvionyeckuhuchqdzr.supabase.co";
     const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Ind6eXZpb255ZWNrdWh1Y2hxZHpyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTQxODE5MjIsImV4cCI6MjEwOTc1NzkyMn0.dOkfD0UHGZTBrm0gU8CBQQ0MChbfJ0A_PtG3tmZ4mM8";
     const GOOGLE_SHEET_WEBHOOK_URL = "https://script.google.com/macros/s/AKfycbzSJi3aTDeU9RGVk5U6f5ErPmCi6dS--5xPCFdSGhpYOJTuCEYHZ7KOFrvqo5pg2L3r/exec";
@@ -994,3 +1000,6 @@
 
     // Run on startup
     window.addEventListener('DOMContentLoaded', init);
+  </script>
+</body>
+</html>
