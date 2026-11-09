@@ -956,7 +956,45 @@
 
     // --- SYNC FUNCTION STUB ---
     // TODO: PASTE SUPABASE & GOOGLE SHEETS SYNC HERE
-    async function syncWorkoutData(rows) {
+    async const SUPABASE_URL = "const SUPABASE_URL = "https://wzyvionyeckuhuchqdzr.supabase.co";
+const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Ind6eXZpb255ZWNrdWh1Y2hxZHpyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTQxODE5MjIsImV4cCI6MjEwOTc1NzkyMn0.dOkfD0UHGZTBrm0gU8CBQQ0MChbfJ0A_PtG3tmZ4mM8";
+const GOOGLE_SHEET_WEBHOOK_URL = "https://script.google.com/macros/s/AKfycbzSJi3aTDeU9RGVk5U6f5ErPmCi6dS--5xPCFdSGhpYOJTuCEYHZ7KOFrvqo5pg2L3r/exec";
+
+async function syncWorkoutData(rows) {
+  if (!rows || rows.length === 0) {
+    throw new Error("No completed sets to save.");
+  }
+
+  // 1. Save to Supabase (workout_logs table)
+  const supabaseResponse = await fetch(`${SUPABASE_URL}/rest/v1/workout_logs`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "apikey": SUPABASE_ANON_KEY,
+      "Authorization": `Bearer ${SUPABASE_ANON_KEY}`,
+      "Prefer": "return=minimal"
+    },
+    body: JSON.stringify(rows)
+  });
+
+  if (!supabaseResponse.ok) {
+    const errText = await supabaseResponse.text();
+    throw new Error(`Supabase sync failed: ${errText}`);
+  }
+
+  // 2. Send to Google Sheets via Apps Script Web App
+  // Uses text/plain to avoid browser CORS preflight blocks with Google Apps Script
+  await fetch(GOOGLE_SHEET_WEBHOOK_URL, {
+    method: "POST",
+    mode: "no-cors",
+    headers: { "Content-Type": "text/plain;charset=utf-8" },
+    body: JSON.stringify(rows)
+  });
+
+  return true;
+}
+
+(rows) {
       /*
         Example Supabase integration:
         const { data, error } = await supabase.from('workout_sets').insert(rows);
